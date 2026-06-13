@@ -7,9 +7,20 @@
         <div class="page-header-title">Data Mahasiswa</div>
         <div class="page-header-sub">Kelola data mahasiswa beserta informasi jurusan</div>
     </div>
-    <a href="{{ route('mahasiswa.create') }}" class="btn-primary-custom">
-        <i class="fas fa-user-plus"></i> Tambah Mahasiswa
-    </a>
+    <div style="display: flex; gap: 10px;">
+        <a href="{{ route('mahasiswa.print') }}" target="_blank" class="btn-primary-custom" style="background-color: #475569;">
+            <i class="fas fa-print"></i> Cetak PDF
+        </a>
+        <a href="{{ route('mahasiswa.export-excel') }}" class="btn-export-excel" style="background: #38a169; color: #fff; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-file-excel"></i> Export Excel
+        </a>
+        <a href="{{ route('mahasiswa.export-csv') }}" class="btn-export-csv" style="background: #319795; color: #fff; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-file-csv"></i> Export CSV
+        </a>
+        <a href="{{ route('mahasiswa.create') }}" class="btn-primary-custom">
+            <i class="fas fa-plus"></i> Tambah Mahasiswa
+        </a>
+    </div>
 </div>
 
 <div class="table-card">
@@ -112,6 +123,6 @@
                class="page-pill {{ $mahasiswas->currentPage() == $p ? 'active' : '' }}">{{ $p }}</a>
             @endfor
         </div>
-    </div>
+    </div>    
 </div>
 @endsection

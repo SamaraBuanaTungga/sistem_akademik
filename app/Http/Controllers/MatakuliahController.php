@@ -59,10 +59,70 @@ class MatakuliahController extends Controller
         $matakuliah->update($request->all());
         return redirect()->route('matakuliah.index')->with('success', 'Matakuliah berhasil diupdate!');
     }
-
+    
     public function destroy(Matakuliah $matakuliah)
     {
         $matakuliah->delete();
         return redirect()->route('matakuliah.index')->with('success', 'Matakuliah berhasil dihapus!');
     }
+    
+    // EXPORT CSV
+    public function exportCsv()
+    {
+        $fileName = 'data_matakuliah.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
+
+        $callback = function () {
+            $file = fopen('php://output', 'w');
+
+            // Tambahkan BOM agar karakter UTF-8 terbaca rapi langsung di Excel
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header kolom CSV
+            fputcsv($file, [
+                'ID MATAKULIAH',
+                'NAMA MATAKULIAH',
+                'SKS',
+                'JURUSAN / PROGRAM STUDI'
+            ], ';');
+
+            $matakuliah = Matakuliah::with('jurusan')->get();
+
+            foreach ($matakuliah as $item) {
+                fputcsv($file, [
+                    $item->id_matakuliah,
+                    $item->nama_matakuliah,
+                    $item->sks,
+                    $item->jurusan->nama_jurusan ?? '-',
+                ], ';');
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // PRINT PDF
+    public function print()
+    {
+        $matakuliah = Matakuliah::with('jurusan')->get();
+        return view('matakuliah.print', compact('matakuliah'));
+    }
+
+    // EXPORT EXCEL 
+    public function exportExcel()
+    {
+        $matakuliah = Matakuliah::with('jurusan')->get();
+
+        return response()
+            ->view('matakuliah.excel', compact('matakuliah'))
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename=data_matakuliah.xls');
+    }
+
 }
